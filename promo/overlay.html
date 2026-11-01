@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: 'NotoLatin'; src: url('assets/NotoSans.ttf'); font-weight: 100 900; }
+@font-face { font-family: 'NotoDeva';  src: url('assets/NotoSansDevanagari.ttf'); font-weight: 100 900; }
+html, body { margin: 0; padding: 0; background: transparent; width: 1080px; height: 1920px; overflow: hidden; }
+body { font-family: 'NotoLatin', 'NotoDeva', sans-serif; font-weight: 800; position: relative; }
+.abs { position: absolute; opacity: 0; will-change: transform, opacity; }
+.stroke { -webkit-text-stroke: 12px #000; paint-order: stroke fill; text-shadow: 0 6px 18px rgba(0,0,0,.55); }
+.amber { color: #FFC857; }
+.white { color: #fff; }
+
+#hook { left: 80px; width: 880px; top: 170px; text-align: center; font-size: 78px; line-height: 1.12; }
+#title { left: 80px; width: 880px; top: 170px; text-align: left; }
+#title .l1 { font-size: 100px; line-height: 1.05; }
+#title .l2 { font-size: 56px; line-height: 1.2; margin-top: 4px; }
+
+#offer { left: 672px; top: 520px; width: 260px; }
+#offer .badge { width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFE08A, #FFC857 55%, #F2A100);
+  border: 10px solid #fff; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transform: rotate(-8deg); box-shadow: 0 10px 30px rgba(0,0,0,.5); color: #1a1205; }
+#offer .big { font-size: 84px; line-height: 1; font-weight: 800; }
+#offer .small { font-size: 30px; font-weight: 800; margin-top: 8px; letter-spacing: 1px; }
+#offer svg { display: block; margin: 6px 0 0 20px; filter: drop-shadow(0 4px 8px rgba(0,0,0,.6)); }
+
+.chip { left: 80px; top: 930px; font-size: 50px; line-height: 1; color: #fff; background: rgba(14,14,14,.74);
+  border-left: 12px solid #FFC857; border-radius: 16px; padding: 14px 28px 14px 22px; white-space: nowrap; }
+
+#price { left: 80px; width: 880px; top: 1190px; text-align: center; }
+#price span { display: inline-block; background: #FFC857; color: #1a1205; font-size: 90px; line-height: 1; padding: 14px 54px;
+  border-radius: 80px; border: 8px solid #fff; box-shadow: 0 10px 28px rgba(0,0,0,.5); }
+
+#caption { position: absolute; left: 80px; width: 880px; top: 1420px; height: 120px; text-align: center; font-size: 80px; line-height: 1.1; opacity: 1; }
+#caption .line { display: none; white-space: nowrap; }
+#caption .w { display: inline-block; margin: 0 12px; opacity: 0; color: #fff; -webkit-text-stroke: 12px #000; paint-order: stroke fill; text-shadow: 0 6px 18px rgba(0,0,0,.55); }
+#caption .w.hl { color: #FFC857; }
+
+#cta { left: 80px; width: 880px; top: 1336px; text-align: center; }
+#cta .l1 { font-size: 58px; line-height: 1.12; color: #fff; }
+#cta .pill { display: inline-block; margin-top: 10px; background: #25D366; color: #08210f; font-size: 56px; line-height: 1;
+  padding: 14px 44px; border-radius: 70px; border: 8px solid #fff; box-shadow: 0 10px 28px rgba(0,0,0,.5); }
+</style>
+</head>
+<body>
+<div id="hook" class="abs stroke amber"></div>
+<div id="title" class="abs"><div class="l1 stroke amber"></div><div class="l2 stroke white"></div></div>
+<div id="offer" class="abs">
+  <div class="badge"><div class="big"></div><div class="small"></div></div>
+  <svg width="170" height="150" viewBox="0 0 170 150">
+    <path d="M150 6 C150 70 100 105 40 118" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+    <path d="M150 6 C150 70 100 105 40 118" fill="none" stroke="#FFC857" stroke-width="9" stroke-linecap="round"/>
+    <path d="M18 122 L58 90 L62 140 Z" fill="#FFC857" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
+  </svg>
+</div>
+<div id="chips"></div>
+<div id="price" class="abs"><span class="pricetxt"></span></div>
+<div id="caption"></div>
+<div id="cta" class="abs"><div class="l1 stroke"></div><div class="pill"></div></div>
+
+<script src="work/cfg.js"></script>
+<script>
+const C = window.CFG;
+const clamp = x => Math.max(0, Math.min(1, x));
+const backOut = p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const cubicOut = p => 1 - Math.pow(1 - p, 3);
+const bounceOut = p => { const n = 7.5625, d = 2.75;
+  if (p < 1 / d) return n * p * p;
+  if (p < 2 / d) { p -= 1.5 / d; return n * p * p + 0.75; }
+  if (p < 2.5 / d) { p -= 2.25 / d; return n * p * p + 0.9375; }
+  p -= 2.625 / d; return n * p * p + 0.984375; };
+const $ = id => document.getElementById(id);
+
+// ---- fill text ----
+$('hook').innerHTML = C.hook_text.map(s => '<div>' + s + '</div>').join('');
+$('title').querySelector('.l1').textContent = C.title.line1;
+$('title').querySelector('.l2').textContent = C.title.line2;
+$('offer').querySelector('.big').textContent = C.offer.big;
+$('offer').querySelector('.small').textContent = C.offer.small;
+$('price').querySelector('.pricetxt').textContent = C.price;
+$('cta').querySelector('.l1').innerHTML = C.cta.line1;
+$('cta').querySelector('.pill').textContent = C.cta.contact;
+
+const chipEls = C.features.map((f, i) => {
+  const d = document.createElement('div'); d.className = 'chip abs'; d.textContent = f;
+  d.style.top = (930 + i * 86) + 'px'; $('chips').appendChild(d); return d; });
+
+const capLines = C.caption_lines.map(l => {
+  const d = document.createElement('div'); d.className = 'line';
+  const ws = l.words.map((w, i) => { const s = document.createElement('span');
+    s.className = 'w' + ((l.hl || []).includes(i) ? ' hl' : ''); s.textContent = w; d.appendChild(s); return s; });
+  $('caption').appendChild(d); return { el: d, ws, start: l.start, end: l.end }; });
+
+const T = C.times;
+const items = [];   // {name, el, s, e}
+items.push({ name: 'hook', el: $('hook'), s: T.hook[0], e: T.hook[1] });
+items.push({ name: 'title', el: $('title'), s: T.title[0], e: T.title[1] });
+items.push({ name: 'offer', el: $('offer'), s: T.offer[0], e: T.offer[1] });
+items.push({ name: 'price', el: $('price'), s: T.price[0], e: T.price[1] });
+chipEls.forEach((el, i) => items.push({ name: 'chip' + (i + 1), el, s: T.features[i][0], e: T.features[i][1] }));
+items.push({ name: 'cta', el: $('cta'), s: T.cta[0], e: T.cta[1] });
+
+function transformFor(name, t, s, e) {
+  const pin = clamp((t - s) / 0.4), pout = clamp((e - t) / 0.2);
+  let tr = '', op = Math.min(1, pin * 4, pout);
+  if (name === 'hook') { tr = 'scale(' + (backOut(pin) * (0.92 + 0.08 * pout)) + ')'; }
+  else if (name === 'title') { tr = 'translateX(' + (-(1 - cubicOut(pin)) * 700) + 'px)'; }
+  else if (name === 'offer') { const pulse = 1 + 0.07 * Math.sin(t * 2 * Math.PI * 2.2);
+    tr = 'scale(' + (backOut(pin) * pulse * (0.9 + 0.1 * pout)) + ')'; }
+  else if (name === 'price') { tr = 'translateY(' + (-(1 - bounceOut(pin)) * 160) + 'px)'; }
+  else if (name.startsWith('chip')) { tr = 'translateX(' + (-(1 - cubicOut(pin)) * 600) + 'px)'; }
+  else if (name === 'cta') { const pulse = 1 + 0.05 * Math.sin(t * 2 * Math.PI * 2.0);
+    tr = 'scale(' + (backOut(pin) * pulse) + ')'; }
+  return { tr, op, pin, pout };
+}
+
+function render(t) {
+  const rects = [];
+  for (const it of items) {
+    if (t < it.s || t >= it.e) { it.el.style.opacity = 0; continue; }
+    const r = transformFor(it.name, t, it.s, it.e);
+    it.el.style.opacity = r.op;
+    it.el.style.transform = r.tr;
+    if (it.name === 'offer') it.el.querySelector('svg').style.transform = 'translate(' + (Math.sin(t * 9) * 6) + 'px,' + (Math.cos(t * 9) * 6) + 'px)';
+    const settled = (t - it.s) > 0.7 && (it.e - t) > 0.3;
+    // rect of the visible content (children), ignoring the full-width container
+    let box = it.el.getBoundingClientRect();
+    if (['hook', 'title', 'price', 'cta'].includes(it.name)) {
+      const kids = it.el.querySelectorAll(it.name === 'price' ? 'span' : '.l1, .l2, .pill, div');
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      kids.forEach(k => { const b = k.getBoundingClientRect();
+        // use text width for block children
+        let bb = b;
+        if (k.tagName === 'DIV' && !k.classList.contains('pill')) { const rg = document.createRange(); rg.selectNodeContents(k); bb = rg.getBoundingClientRect(); bb = { left: bb.left, right: bb.right, top: b.top, bottom: b.bottom }; }
+        x0 = Math.min(x0, bb.left); y0 = Math.min(y0, bb.top); x1 = Math.max(x1, bb.right); y1 = Math.max(y1, bb.bottom); });
+      if (kids.length) box = { left: x0, right: x1, top: y0, bottom: y1 };
+    }
+    rects.push({ name: it.name, left: box.left, right: box.right, top: box.top, bottom: box.bottom, settled });
+  }
+  // captions
+  const lastCta = T.cta[0];
+  let capVisible = false;
+  for (const L of capLines) {
+    const on = t >= L.start && t < L.end && t < lastCta;
+    L.el.style.display = on ? 'block' : 'none';
+    if (on) {
+      capVisible = true;
+      L.ws.forEach((w, i) => { const p = clamp((t - (L.start + i * 0.17)) / 0.14);
+        w.style.opacity = p > 0 ? 1 : 0; w.style.transform = 'scale(' + (0.6 + 0.4 * backOut(p) ) + ')'; });
+      const rg = document.createRange(); rg.selectNodeContents(L.el); const b = rg.getBoundingClientRect();
+      const cb = $('caption').getBoundingClientRect();
+      rects.push({ name: 'caption', left: b.left, right: b.right, top: cb.top, bottom: cb.bottom, settled: (t - L.start) > 0.6 });
+    }
+  }
+  return { visible: items.some(it => t >= it.s && t < it.e) || capVisible, rects };
+}
+window.render = render;
+document.fonts.ready.then(() => { window.READY = true; });
+</script>
+</body>
+</html>

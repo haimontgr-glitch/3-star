@@ -1,0 +1,44 @@
+{
+  "input": "input/INPUT.mp4",
+  "output": "output/promo.mp4",
+  "width": 1080, "height": 1920, "fps": 30,
+
+  "cuts": [[5.32, 5.58], [7.33, 7.57], [9.52, 9.78], [13.06, 13.40], [16.15, 16.39], [18.04, null]],
+  "hook_segment": 1,
+  "zooms": [1.0, 1.18, 1.0, 1.18, 1.0, 1.30],
+  "flash_frames": 4,
+  "color": {"brightness": 0.08, "contrast": 1.1, "saturation": 1.15, "shadow_lift": 0.04},
+
+  "safe": {"left": 80, "right": 120, "top": 150, "bottom": 340},
+
+  "hook_text": ["Smartwatch + Earbuds,", "ek ota ma!"],
+  "title": {"line1": "S2000 Promax", "line2": "Smart Watch + Earbuds"},
+  "offer": {"big": "७ + ३", "small": "7+3 OFFER"},
+  "price": "Rs. XXXX",
+  "features": ["Bluetooth Calling", "Fitness Tracker", "Earbuds Included"],
+  "cta": {"line1": "Order garna<br>comment / DM garnus", "contact": "98XXXXXXXX"},
+
+  "timeline": {
+    "hook":     [0.0, 1.75],
+    "title":    [4.4, 10.4],
+    "offer":    [7.1, 12.3],
+    "price":    [9.3, 99],
+    "features": [[5.4, 12.3], [7.2, 12.3], [9.0, 12.3]],
+    "cta":      [-2.0, 99]
+  },
+
+  "caption_lines": [
+    {"start": 2.0,  "end": 3.7,  "words": ["Smart", "Watch"],        "hl": [1]},
+    {"start": 3.7,  "end": 5.4,  "words": ["+", "Earbuds"],          "hl": [1]},
+    {"start": 5.4,  "end": 7.0,  "words": ["ek", "ota", "ma!"],     "hl": [1]},
+    {"start": 7.1,  "end": 8.8,  "words": ["Special", "7+3"],       "hl": [1]},
+    {"start": 8.8,  "end": 10.4, "words": ["Offer", "chha!"],       "hl": [0]},
+    {"start": 10.4, "end": 12.4, "words": ["Aajai", "order"],       "hl": [1]},
+    {"start": 12.4, "end": 14.6, "words": ["garnus!"],              "hl": [0]}
+  ],
+
+  "caption_text": "S2000 Promax Smart Watch + Earbuds, ek ota ma! 7+3 offer. Order garna comment/DM garnus.",
+  "hashtags": "#smartwatch #earbuds #nepal #nepalishopping #s2000promax",
+
+  "check_times": {"hook": 0.9, "mid": 8.5, "box_closeup": 15.2, "cta": 16.4}
+}
